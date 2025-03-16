@@ -1,0 +1,6 @@
+<div id="content" class="w-[65%] p-16 h-60 border-box">
+    <form hx-post="/login" hx-target="body">
+        <input type="password" name="key" placeholder="Password"/>
+        <input type="submit"/>
+    </form>
+</div>
