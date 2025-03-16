@@ -1,0 +1,9 @@
+<div id="content" class="w-[65%] mt-20 box-border">
+    <div class="p-4 box-border">
+        <h1><%= article.title %></h1>
+        <h3><%= article.created %></h3>
+    </div>
+    <div class="border-t border-b border-white border-solid p-4">
+        <%= article.content %>
+    </div>
+</div>

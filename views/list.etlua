@@ -1,0 +1,11 @@
+<% for _, article in ipairs(articles) do %>
+    <div
+        class="hover:cursor-pointer border border-white w-full p-16 h-60 border-box" 
+        hx-push-url="true" 
+        hx-get= <%= "/blog/" .. article.id %>
+        hx-trigger="click" hx-target="#content" hx-swap="outerHTML"
+        >
+        <h3><%= article.title %></h3>
+        <h4><%= article.created %></h4>
+    </div>
+<% end %>
