@@ -1,10 +1,11 @@
 local lapis = require("lapis")
 local db = require("lapis.db")
 local respond_to = require("lapis.application").respond_to
+local uuid = require("uuid")
 
 local bcrypt = require("bcrypt")
-local log_rounds = 9
 
+uuid.set_rng(uuid.rng.urandom())
 
 local app = lapis.Application()
 app:enable("etlua")
@@ -66,7 +67,7 @@ app:match("/login", respond_to({
     -- do common setup
     before = function(self)
         if self.session.current_user then
-            self:write({ redirect_to = "/" })
+            self:write({ redirect_to = "/create-article" })
         end
     end,
     -- render the view
@@ -75,13 +76,36 @@ app:match("/login", respond_to({
     end,
     -- handle the form submission
     POST = function(self)
-        print("are we actually posting???")
-        self.session.current_user =
-            try_to_login(self.params.key)
-
-        return { redirect_to = "/" }
+        local user = try_to_login(self.params.key)
+        self.session.current_user = user
+        if user then
+            return { redirect_to = "/create-article" }
+        else
+            return { redirect_to = "/login" }
+        end
     end
 }))
 
+app:match("/create-article", respond_to({
+    before = function(self)
+        if not self.session.current_user then
+            self:write({ redirect_to = "/login" })
+        end
+    end,
+
+    GET = function()
+        return { render = "create-article" }
+    end,
+    POST = function(self)
+        local id = uuid.v4()
+        db.insert("articles", {
+            id = id,
+            created = os.date("%b %d, %Y"),
+            title = self.params.title,
+            content = self.params.content,
+        })
+        return { redirect_to = "/blog/" .. id }
+    end
+}))
 
 return app

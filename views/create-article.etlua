@@ -1,0 +1,24 @@
+<div class="p-52 w-[65%]">
+    <form 
+        hx-push-url="true" 
+        hx-post="/create-article" 
+        hx-target="body"
+        >
+        <div class="container flex flex-col gap-5">
+            <input type="text" name="title" placeholder="Title"/>
+            <textarea name="content" id="area"></textarea>
+            <input type="submit"/>
+        </div>
+    </form>
+
+    <script type="application/javascript">
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Add to your textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', () => autoResize(textarea)); 
+    </script>
+</div>
