@@ -47,12 +47,39 @@ local function test_heading_parser()
     end
 end
 
+
+local function test_list_parser()
+    local sample_input = "- one\n- two\n- three list\n"
+    local expected_output = {
+        {
+            type = "ul",
+            content = "one",
+        },
+        {
+            type = "ul",
+            content = "two",
+        },
+        {
+            type = "ul",
+            content = "three list",
+        },
+    }
+    local parsed = parser:parse(sample_input)
+    for i, expected in ipairs(expected_output) do
+        assert(
+            expected.type == parsed[i].type and
+            expected.content == parsed[i].content,
+            "failed to list at step: " .. i)
+    end
+end
+
 --- simple test runner for them tests
 local function test_runner()
     parser:new()
     local tests = {
         test_text_parser,
         test_heading_parser,
+        test_list_parser,
     }
 
     for i, test in ipairs(tests) do

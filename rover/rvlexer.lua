@@ -12,8 +12,6 @@ local Lexer = {}
 function Lexer:reset(line, position)
     Lexer.line = line
     Lexer.position = position or 1
-    Lexer.read_position = position or 1
-    Lexer.char = ""
 end
 
 --- @class Token
@@ -55,8 +53,22 @@ function Lexer:handle_heading(line)
     } or nil
 end
 
+---proceed with collecting heading
+---@param line string
+---@return Token?
+function Lexer:handle_list(line)
+    if line:sub(Lexer.position + 1, Lexer.position + 1) == " " then
+        return {
+            type = "ul",
+            content = line:sub(Lexer.position + 2)
+        }
+    end
+    return nil
+end
+
 Lexer.tokens = {
     ["#"] = Lexer.handle_heading,
+    ["-"] = Lexer.handle_list,
 }
 
 --- create tokens from the line
