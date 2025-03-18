@@ -24,6 +24,15 @@ local Token = {}
 ---@param line string
 ---@return Token
 function Lexer:plain_text(line)
+    --- check first if we're are not in the ordered list
+    if tonumber(line:sub(Lexer.position, Lexer.position)) ~= nil and
+        line:sub(Lexer.position + 1, Lexer.position + 1) == "." then
+        return {
+            type = "ol",
+            content = line:sub(Lexer.position + 3),
+        }
+    end
+
     return {
         type = "text",
         content = line,

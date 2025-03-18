@@ -98,6 +98,32 @@ local function test_blockquote()
     end
 end
 
+
+local function test_ordered_list()
+    local sample_input = "1. one\n2. two\n3. three list\n"
+    local expected_output = {
+        {
+            type = "ol",
+            content = "one",
+        },
+        {
+            type = "ol",
+            content = "two",
+        },
+        {
+            type = "ol",
+            content = "three list",
+        },
+    }
+    local parsed = parser:parse(sample_input)
+    for i, expected in ipairs(expected_output) do
+        assert(
+            expected.type == parsed[i].type and
+            expected.content == parsed[i].content,
+            "failed to list at step: " .. i)
+    end
+end
+
 --- simple test runner for them tests
 local function test_runner()
     parser:new()
@@ -106,6 +132,7 @@ local function test_runner()
         test_heading_parser,
         test_list_parser,
         test_blockquote,
+        test_ordered_list,
     }
 
     for i, test in ipairs(tests) do
