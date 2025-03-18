@@ -53,7 +53,7 @@ function Lexer:handle_heading(line)
     } or nil
 end
 
----proceed with collecting heading
+---proceed with collecting list
 ---@param line string
 ---@return Token?
 function Lexer:handle_list(line)
@@ -66,9 +66,23 @@ function Lexer:handle_list(line)
     return nil
 end
 
+---proceed with collecting blockquote
+---@param line string
+---@return Token?
+function Lexer:handle_blockquote(line)
+    if line:sub(Lexer.position + 1, Lexer.position + 1) == " " then
+        return {
+            type = "blockquote",
+            content = line:sub(Lexer.position + 2)
+        }
+    end
+    return nil
+end
+
 Lexer.tokens = {
     ["#"] = Lexer.handle_heading,
     ["-"] = Lexer.handle_list,
+    [">"] = Lexer.handle_blockquote,
 }
 
 --- create tokens from the line

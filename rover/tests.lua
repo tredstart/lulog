@@ -73,6 +73,31 @@ local function test_list_parser()
     end
 end
 
+local function test_blockquote()
+    local sample_input = "> this is a block quote \n> and this is too \nbut this is a plain text\n"
+    local expected_output = {
+        {
+            type = "blockquote",
+            content = "this is a block quote ",
+        },
+        {
+            type = "blockquote",
+            content = "and this is too ",
+        },
+        {
+            type = "text",
+            content = "but this is a plain text",
+        },
+    }
+    local parsed = parser:parse(sample_input)
+    for i, expected in ipairs(expected_output) do
+        assert(
+            expected.type == parsed[i].type and
+            expected.content == parsed[i].content,
+            "failed to list at step: " .. i)
+    end
+end
+
 --- simple test runner for them tests
 local function test_runner()
     parser:new()
@@ -80,6 +105,7 @@ local function test_runner()
         test_text_parser,
         test_heading_parser,
         test_list_parser,
+        test_blockquote,
     }
 
     for i, test in ipairs(tests) do
