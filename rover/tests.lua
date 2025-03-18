@@ -124,6 +124,37 @@ local function test_ordered_list()
     end
 end
 
+local function test_codeblock()
+    local sample_input = [[```
+    for i, expected in ipairs(expected_output) do
+        assert(
+```
+]]
+    local expected_output = {
+        {
+            type = "codeblock",
+        },
+        {
+            type = "text",
+            content = "    for i, expected in ipairs(expected_output) do",
+        },
+        {
+            type = "text",
+            content = "        assert(",
+        },
+        {
+            type = "codeblock",
+        },
+    }
+    local parsed = parser:parse(sample_input)
+    for i, expected in ipairs(expected_output) do
+        assert(
+            expected.type == parsed[i].type and
+            expected.content == parsed[i].content,
+            "failed to list at step: " .. i)
+    end
+end
+
 --- simple test runner for them tests
 local function test_runner()
     parser:new()
@@ -133,6 +164,7 @@ local function test_runner()
         test_list_parser,
         test_blockquote,
         test_ordered_list,
+        test_codeblock,
     }
 
     for i, test in ipairs(tests) do

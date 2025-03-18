@@ -88,10 +88,23 @@ function Lexer:handle_blockquote(line)
     return nil
 end
 
+---proceed with collecting codeblock
+---@param line string
+---@return Token?
+function Lexer:handle_codeblock(line)
+    if line:sub(Lexer.position, Lexer.position + 3) == "```" then
+        return {
+            type = "codeblock",
+        }
+    end
+    return nil
+end
+
 Lexer.tokens = {
     ["#"] = Lexer.handle_heading,
     ["-"] = Lexer.handle_list,
     [">"] = Lexer.handle_blockquote,
+    ["`"] = Lexer.handle_codeblock,
 }
 
 --- create tokens from the line
