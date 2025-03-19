@@ -773,3 +773,33 @@ textarea {
 .hover\:cursor-pointer:hover {
   cursor: pointer;
 }
+
+blockquote {
+  /* Background and border to match the dark theme with a subtle highlight */
+  background-color: #1a1a1a; /* Slightly lighter than the page background */
+  border-left: 4px solid #4a4a4a; /* A gray border to stand out */
+  padding: 15px 20px;
+  margin: 20px 0;
+  
+  /* Typography to match the monospaced, terminal-like style */
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #d3d3d3; /* Light gray text to match the page */
+  
+  /* Optional: Add a subtle shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+ul {
+/* Remove default list styling and add spacing */
+  list-style: none; /* Removes default bullets */
+  padding: 0;
+  margin: 20px 0;
+}
+
+ul li::before {
+  content: '>>  '; /* A terminal-like bullet, e.g., ">>" */
+  color: #4a4a4a; /* A darker gray for the bullet to contrast with the text */
+  font-weight: bold;
+}
