@@ -13,7 +13,12 @@ local tags = {
         closer = "</p>",
     },
     ["ul"] = {
+        opener = "<ul>",
         closer = "</ul>"
+    },
+    ["ol"] = {
+        opener = "<ol>",
+        closer = "</ol>"
     }
 }
 
@@ -131,14 +136,14 @@ function Renderer:plain_text(token)
     self.content = self.content .. token.content:sub(start)
 end
 
----create ul
+---create list
 ---@param token Token
-function Renderer:ul(token)
-    if self.last_token ~= nil and tags[self.last_token.type] ~= nil and self.last_token.type ~= "ul" then
+function Renderer:list(token)
+    if self.last_token ~= nil and tags[self.last_token.type] ~= nil and self.last_token.type ~= token.type then
         self.content = self.content .. (tags[self.last_token.type].closer or "")
     end
-    if self.last_token ~= nil and self.last_token.type ~= "ul" then
-        self.content = self.content .. "<ul>"
+    if self.last_token ~= nil and self.last_token.type ~= token.type then
+        self.content = self.content .. tags[token.type].opener
     end
     self.content = self.content .. "<li>" .. token.content .. "</li>"
 end
@@ -146,7 +151,8 @@ end
 local tag_handles = {
     ["heading"] = Renderer.heading,
     ["text"] = Renderer.plain_text,
-    ["ul"] = Renderer.ul,
+    ["ul"] = Renderer.list,
+    ["ol"] = Renderer.list,
 }
 ---creates an html tags from the token
 ---@param token Token
