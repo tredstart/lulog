@@ -11,6 +11,9 @@ local tags = {
     ["text"] = {
         opener = "<p>",
         closer = "</p>",
+    },
+    ["ul"] = {
+        closer = "</ul>"
     }
 }
 
@@ -80,8 +83,8 @@ end
 ---create heading
 ---@param token Token
 function Renderer:heading(token)
-    if self.last_token ~= nil and tags[self.last_token.type].closer ~= nil then
-        self.content = self.content .. tags[self.last_token.type].closer
+    if self.last_token ~= nil and tags[self.last_token.type] ~= nil then
+        self.content = self.content .. (tags[self.last_token.type].closer or "")
     end
     self.content = self.content .. "<h" .. token.count .. ">" .. token.content .. "</h" .. token.count .. ">"
 end
@@ -119,7 +122,7 @@ function Renderer:plain_text(token)
                 start = endhref + 1
                 if token.content:sub(i + 1, i + 1) ~= "" then
                     self.content = self.content ..
-                    (tags[self.last_token.type] and tags[self.last_token.type].opener or "")
+                        (tags[self.last_token.type] and tags[self.last_token.type].opener or "")
                 end
             end
         end
@@ -128,9 +131,22 @@ function Renderer:plain_text(token)
     self.content = self.content .. token.content:sub(start)
 end
 
+---create ul
+---@param token Token
+function Renderer:ul(token)
+    if self.last_token ~= nil and tags[self.last_token.type] ~= nil and self.last_token.type ~= "ul" then
+        self.content = self.content .. (tags[self.last_token.type].closer or "")
+    end
+    if self.last_token ~= nil and self.last_token.type ~= "ul" then
+        self.content = self.content .. "<ul>"
+    end
+    self.content = self.content .. "<li>" .. token.content .. "</li>"
+end
+
 local tag_handles = {
     ["heading"] = Renderer.heading,
     ["text"] = Renderer.plain_text,
+    ["ul"] = Renderer.ul,
 }
 ---creates an html tags from the token
 ---@param token Token
@@ -150,8 +166,8 @@ function Renderer:render(content)
         self:unwrap_token(token)
         self.last_token = token
     end
-    if self.last_token.type == "text" then
-        self.content = self.content .. "</p>"
+    if self.last_token then
+        self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
     end
     return self.content
 end
