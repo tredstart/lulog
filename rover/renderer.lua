@@ -19,7 +19,10 @@ local tags = {
     ["ol"] = {
         opener = "<ol>",
         closer = "</ol>"
-    }
+    },
+    ["blockquote"] = {
+        closer = "</blockquote>"
+    },
 }
 
 ---create a href
@@ -89,7 +92,7 @@ end
 ---@param token Token
 function Renderer:heading(token)
     if self.last_token ~= nil and tags[self.last_token.type] ~= nil then
-        self.content = self.content .. (tags[self.last_token.type].closer or "")
+        self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
     end
     self.content = self.content .. "<h" .. token.count .. ">" .. token.content .. "</h" .. token.count .. ">"
 end
@@ -100,6 +103,7 @@ function Renderer:plain_text(token)
     local space = " "
     if self.last_token == nil or (self.last_token.type ~= "text" and self.last_token.type ~= "codeblock") then
         space = ""
+        self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
         self.content = self.content .. "<p>"
     end
     self.content = self.content .. space
@@ -140,7 +144,7 @@ end
 ---@param token Token
 function Renderer:list(token)
     if self.last_token ~= nil and tags[self.last_token.type] ~= nil and self.last_token.type ~= token.type then
-        self.content = self.content .. (tags[self.last_token.type].closer or "")
+        self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
     end
     if self.last_token ~= nil and self.last_token.type ~= token.type then
         self.content = self.content .. tags[token.type].opener
@@ -149,17 +153,28 @@ function Renderer:list(token)
 end
 
 ---create codeblock
----@param token Token
 function Renderer:codeblock(token)
     if self.last_token and self.last_token.type == "codeblock" then
         self.content = self.content .. "</pre>"
         self.last_token = nil
+        token.type = ""
     else
         if self.last_token ~= nil and tags[self.last_token.type] ~= nil then
-            self.content = self.content .. (tags[self.last_token.type].closer or "")
+            self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
         end
         self.content = self.content .. "<pre>"
     end
+end
+
+---create blockquote
+---@param token Token
+function Renderer:blockquote(token)
+    local space = " "
+    if not self.last_token or self.last_token.type ~= "blockquote" then
+        self.content = self.content .. "<blockquote>"
+        space = ""
+    end
+    self.content = self.content .. space .. token.content
 end
 
 local tag_handles = {
@@ -168,6 +183,7 @@ local tag_handles = {
     ["ul"] = Renderer.list,
     ["ol"] = Renderer.list,
     ["codeblock"] = Renderer.codeblock,
+    ["blockquote"] = Renderer.blockquote,
 }
 ---creates an html tags from the token
 ---@param token Token
