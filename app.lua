@@ -25,7 +25,7 @@ app:get("/about", function()
 end)
 
 app:get("/blog/list", function(self)
-    self.articles = db.query("select * from articles")
+    self.articles = db.query("select * from articles order by id asc")
     return {
         render = "list",
         layout = false,
