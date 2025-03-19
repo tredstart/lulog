@@ -1,4 +1,4 @@
-local Parser = require("rvparser")
+local Parser = require("rover.rvparser")
 
 
 --- @class Renderer
@@ -103,12 +103,13 @@ function Renderer:plain_text(token)
     local space = " "
     if self.last_token == nil or (self.last_token.type ~= "text" and self.last_token.type ~= "codeblock") then
         space = ""
-        self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
+        local type = self.last_token and self.last_token.type or ""
+        self.content = self.content .. (tags[type] and tags[type].closer or "")
         self.content = self.content .. "<p>"
     end
     self.content = self.content .. space
     if self.last_token ~= nil and self.last_token.type == "codeblock" then
-        self.content = self.content .. token.content
+        self.content = self.content .. "\n" .. token.content
         return
     end
     local start = 1
@@ -155,14 +156,14 @@ end
 ---create codeblock
 function Renderer:codeblock(token)
     if self.last_token and self.last_token.type == "codeblock" then
-        self.content = self.content .. "</pre>"
+        self.content = self.content .. "</code></pre>"
         self.last_token = nil
         token.type = ""
     else
         if self.last_token ~= nil and tags[self.last_token.type] ~= nil then
             self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
         end
-        self.content = self.content .. "<pre>"
+        self.content = self.content .. "<pre><code>"
     end
 end
 

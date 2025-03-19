@@ -92,7 +92,7 @@ end
 ---@param line string
 ---@return Token?
 function Lexer:handle_codeblock(line)
-    if line:sub(Lexer.position, Lexer.position + 3) == "```" then
+    if line:sub(Lexer.position, Lexer.position + 2) == "```" then
         return {
             type = "codeblock",
         }

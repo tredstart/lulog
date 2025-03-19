@@ -4,6 +4,6 @@
         <h3><%= article.created %></h3>
     </div>
     <div class="border-t border-b border-white border-solid p-4">
-        <%= article.content %>
+        <%- content %>
     </div>
 </div>

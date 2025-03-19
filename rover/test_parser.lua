@@ -1,4 +1,4 @@
-local parser = require("rvparser")
+local parser = require("rover.rvparser")
 
 local test = {}
 

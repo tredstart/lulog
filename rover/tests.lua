@@ -1,7 +1,7 @@
-local parser = require("rvparser")
+local parser = require("rover.rvparser")
 
-local test_parser = require("test_parser")
-local test_render = require("test_render")
+local test_parser = require("rover.test_parser")
+local test_render = require("rover.test_render")
 
 --- simple test runner for them tests
 local function test_runner()

@@ -1,4 +1,4 @@
-local Renderer = require("renderer")
+local Renderer = require("rover.renderer")
 local Rover = {
     Renderer = Renderer
 }

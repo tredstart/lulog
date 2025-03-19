@@ -1,4 +1,4 @@
-local Lexer = require("rvlexer")
+local Lexer = require("rover.rvlexer")
 
 --- @class Parser
 --- @field lexer Lexer

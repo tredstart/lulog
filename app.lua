@@ -2,6 +2,7 @@ local lapis = require("lapis")
 local db = require("lapis.db")
 local respond_to = require("lapis.application").respond_to
 local uuid = require("uuid")
+local renderer = require("rover").Renderer
 
 local bcrypt = require("bcrypt")
 
@@ -35,6 +36,7 @@ app:get("/blog/:id", function(self)
     local article = db.query("select * from articles where id = ? limit 1", self.params.id)
     if #article == 1 then
         self.article = article[1]
+        self.content = renderer:render(article[1].content)
     else
         return {
             status = 404,
