@@ -148,11 +148,26 @@ function Renderer:list(token)
     self.content = self.content .. "<li>" .. token.content .. "</li>"
 end
 
+---create codeblock
+---@param token Token
+function Renderer:codeblock(token)
+    if self.last_token and self.last_token.type == "codeblock" then
+        self.content = self.content .. "</pre>"
+        self.last_token = nil
+    else
+        if self.last_token ~= nil and tags[self.last_token.type] ~= nil then
+            self.content = self.content .. (tags[self.last_token.type].closer or "")
+        end
+        self.content = self.content .. "<pre>"
+    end
+end
+
 local tag_handles = {
     ["heading"] = Renderer.heading,
     ["text"] = Renderer.plain_text,
     ["ul"] = Renderer.list,
     ["ol"] = Renderer.list,
+    ["codeblock"] = Renderer.codeblock,
 }
 ---creates an html tags from the token
 ---@param token Token
@@ -170,7 +185,9 @@ function Renderer:render(content)
     local parsed = parser:parse(content)
     for _, token in ipairs(parsed) do
         self:unwrap_token(token)
-        self.last_token = token
+        if not self.last_token or self.last_token.type ~= "codeblock" then
+            self.last_token = token
+        end
     end
     if self.last_token then
         self.content = self.content .. (tags[self.last_token.type] and tags[self.last_token.type].closer or "")
